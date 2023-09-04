@@ -4,12 +4,14 @@ import java.util.List;
 
 public class GradeCalculator {
 
+    private final Courses courses;
+//    private final List<Course> courses;
 
-    private final List<Course> courses;
-
+    // List로 받더라도 1급 컬렉션으로 전달하도록 변경
     public GradeCalculator(List<Course> courses) {
-        this.courses = courses;
+        this.courses = new Courses(courses);
     }
+
 
     /*
  요구사항
@@ -19,23 +21,13 @@ public class GradeCalculator {
  */
 
     public double calculateGrade() {
+
         // (학점수×교과목 평점)의 합계
-        double MultipliedCreditAndCourseGrade = 0;
+        double totalMultipliedCreditAndCourseGrade = courses.multiplyCreditAndCourseGrade();
 
-        for (Course course: courses) {
-            // 기존 방법
-            // MultipliedCreditAndCourseGrade += course.getcredit() * course.getGradeToNumber;
-            // -> course 내에서 수행하지 않기 때문에 응집도가 낮음
-            // -> 비슷한 코드를 여러 군데에서 사용하게 될 때 수정 시에 번거로움
+        // 수강신청 총학점 수
+        int totalCompletedCredit = courses.calculateTotalCompletedCredit();
 
-            // 수정한 방법 : 객체에게 작업 위임
-            MultipliedCreditAndCourseGrade += course.multiplyCreditAndCourseGrade();
-        }
-
-        int totalCompletedCredit = courses.stream()
-                .mapToInt(Course::getCredit)
-                .sum();
-
-        return MultipliedCreditAndCourseGrade / totalCompletedCredit;
+        return totalMultipliedCreditAndCourseGrade / totalCompletedCredit;
     }
 }
